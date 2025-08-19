@@ -108,6 +108,7 @@ export function ModelSettings() {
     setOpenaiInput(apiKeys?.openai ?? "");
     setAnthropicInput(apiKeys?.anthropic ?? "");
     setOpenrouterInput(apiKeys?.openrouter ?? "");
+    setGoogleInput(apiKeys?.google ?? "");
   }, [apiKeys]);
 
   const saveApiKey = async (provider: ApiKeyProvider, key: string) => {
