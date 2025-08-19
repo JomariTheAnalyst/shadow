@@ -363,6 +363,13 @@ export function ModelSettings() {
       saving: savingOpenrouter,
       handleChange: handleOpenrouterChange,
     },
+    {
+      key: "google",
+      name: "Google (Gemini)",
+      input: googleInput,
+      saving: savingGoogle,
+      handleChange: handleGoogleChange,
+    },
   ];
 
   return (
@@ -393,7 +400,15 @@ export function ModelSettings() {
                     : "password"
                 }
                 autoComplete="off"
-                placeholder={`sk-${provider.key === "openai" ? "" : provider.key === "anthropic" ? "ant-" : "or-"}placeholder...`}
+                placeholder={`${
+                  provider.key === "openai" 
+                    ? "sk-" 
+                    : provider.key === "anthropic" 
+                      ? "sk-ant-" 
+                      : provider.key === "openrouter" 
+                        ? "sk-or-" 
+                        : "AIza"
+                }placeholder...`}
                 value={provider.input}
                 onChange={(e) => provider.handleChange(e.target.value)}
               />
