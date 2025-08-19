@@ -57,9 +57,11 @@ export function ModelSettings() {
   const [openrouterInput, setOpenrouterInput] = useState(
     apiKeys?.openrouter ?? ""
   );
+  const [googleInput, setGoogleInput] = useState(apiKeys?.google ?? "");
   const [savingOpenai, setSavingOpenai] = useState(false);
   const [savingAnthropic, setSavingAnthropic] = useState(false);
   const [savingOpenrouter, setSavingOpenrouter] = useState(false);
+  const [savingGoogle, setSavingGoogle] = useState(false);
 
   const [apiKeyVisibility, setApiKeyVisibility] = useState<
     Record<ApiKeyProvider, boolean>
