@@ -19,6 +19,8 @@ export class ApiKeyValidator {
           return await this.validateAnthropic(apiKey, startTime);
         case "openrouter":
           return await this.validateOpenRouter(apiKey, startTime);
+        case "google":
+          return await this.validateGoogle(apiKey, startTime);
         default:
           throw new Error(`Unsupported provider: ${provider}`);
       }
