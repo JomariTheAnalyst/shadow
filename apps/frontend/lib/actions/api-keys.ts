@@ -116,6 +116,7 @@ export async function getApiKeyValidation(): Promise<ApiKeyValidation> {
   const openaiValidation = cookieStore.get("openai-validation")?.value;
   const anthropicValidation = cookieStore.get("anthropic-validation")?.value;
   const openrouterValidation = cookieStore.get("openrouter-validation")?.value;
+  const googleValidation = cookieStore.get("google-validation")?.value;
   // const groqValidation = cookieStore.get("groq-validation")?.value;
   // const ollamaValidation = cookieStore.get("ollama-validation")?.value;
 
@@ -127,6 +128,7 @@ export async function getApiKeyValidation(): Promise<ApiKeyValidation> {
     openrouter: openrouterValidation
       ? JSON.parse(openrouterValidation)
       : undefined,
+    google: googleValidation ? JSON.parse(googleValidation) : undefined,
     // groq: groqValidation ? JSON.parse(groqValidation) : undefined,
     // ollama: ollamaValidation ? JSON.parse(ollamaValidation) : undefined,
   };
