@@ -23,6 +23,7 @@ export async function getApiKeys(): Promise<ApiKeys> {
   const openaiKey = cookieStore.get("openai-key")?.value;
   const anthropicKey = cookieStore.get("anthropic-key")?.value;
   const openrouterKey = cookieStore.get("openrouter-key")?.value;
+  const googleKey = cookieStore.get("google-key")?.value;
   // const groqKey = cookieStore.get("groq-key")?.value;
   // const ollamaKey = cookieStore.get("ollama-key")?.value;
 
@@ -30,6 +31,7 @@ export async function getApiKeys(): Promise<ApiKeys> {
     openai: openaiKey || undefined,
     anthropic: anthropicKey || undefined,
     openrouter: openrouterKey || undefined,
+    google: googleKey || undefined,
     // groq: groqKey || undefined,
     // ollama: ollamaKey || undefined,
   };
