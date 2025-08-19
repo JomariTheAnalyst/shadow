@@ -120,11 +120,14 @@ export function ModelSettings() {
           ? apiKeys?.anthropic
           : provider === "openrouter"
             ? apiKeys?.openrouter
-            : undefined;
+            : provider === "google"
+              ? apiKeys?.google
+              : undefined;
     if (key === currentKey) {
       if (provider === "openai") setSavingOpenai(false);
       else if (provider === "anthropic") setSavingAnthropic(false);
       else if (provider === "openrouter") setSavingOpenrouter(false);
+      else if (provider === "google") setSavingGoogle(false);
       return;
     }
 
