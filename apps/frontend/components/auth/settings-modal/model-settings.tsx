@@ -248,6 +248,14 @@ export function ModelSettings() {
     200
   );
 
+  const {
+    debouncedCallback: debouncedSaveGoogle,
+    cancel: cancelGoogleSave,
+  } = useDebounceCallbackWithCancel(
+    (key: string) => saveApiKey("google", key),
+    200
+  );
+
   const handleOpenaiChange = (value: string) => {
     setOpenaiInput(value);
     setSavingOpenai(true);
