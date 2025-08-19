@@ -246,6 +246,94 @@ export class ApiKeyValidator {
     }
   }
 
+  private async validateGoogle(
+    apiKey: string,
+    startTime: number
+  ): Promise<ValidationResult> {
+    try {
+      // Make a simple API call to validate the key using Google's generative AI models endpoint
+      const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models",
+        {
+          method: "GET",
+          headers: {
+            "x-goog-api-key": apiKey,
+            "User-Agent": "Shadow-Agent/1.0",
+          },
+          signal: AbortSignal.timeout(10000), // Longer timeout for Google API
+        }
+      );
+
+      const latencyMs = Date.now() - startTime;
+
+      if (response.status === 200) {
+        return { isValid: true, latencyMs };
+      } else if (response.status === 400) {
+        // Check if it's an API key related error
+        const errorData = await response.text();
+        if (errorData.includes("API key")) {
+          return {
+            isValid: false,
+            error: "Invalid Google API key",
+            latencyMs,
+          };
+        }
+        return {
+          isValid: false,
+          error: "Google API validation failed - bad request",
+          latencyMs,
+        };
+      } else if (response.status === 403) {
+        return {
+          isValid: false,
+          error: "Google API key not authorized or quota exceeded",
+          latencyMs,
+        };
+      } else if (response.status === 429) {
+        return {
+          isValid: false,
+          error: "Google API rate limit exceeded",
+          latencyMs,
+        };
+      } else {
+        return {
+          isValid: false,
+          error: `Google API returned status ${response.status}`,
+          latencyMs,
+        };
+      }
+    } catch (error: unknown) {
+      const latencyMs = Date.now() - startTime;
+
+      // Handle specific error types
+      if (
+        (error as Error)?.message?.includes("403") ||
+        (error as Error)?.message?.includes("Forbidden")
+      ) {
+        return {
+          isValid: false,
+          error: "Google API key not authorized",
+          latencyMs,
+        };
+      } else if (
+        (error as Error)?.message?.includes("429") ||
+        (error as Error)?.message?.includes("rate limit")
+      ) {
+        return {
+          isValid: false,
+          error: "Google API rate limit exceeded",
+          latencyMs,
+        };
+      } else {
+        return {
+          isValid: false,
+          error: `Google validation failed: ${(error as Error)?.message || "Unknown error"}`,
+          latencyMs,
+        };
+      }
+    }
+  }
+
   /**
    * Validate multiple API keys concurrently
    */
