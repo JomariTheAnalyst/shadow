@@ -274,6 +274,12 @@ export function ModelSettings() {
     debouncedSaveOpenrouter(value);
   };
 
+  const handleGoogleChange = (value: string) => {
+    setGoogleInput(value);
+    setSavingGoogle(true);
+    debouncedSaveGoogle(value);
+  };
+
   const handleClearApiKey = async (provider: ApiKeyProvider) => {
     try {
       // Check if currently selected model belongs to this provider and clear it if so
