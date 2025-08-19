@@ -69,6 +69,7 @@ export function ModelSettings() {
     openai: false,
     anthropic: false,
     openrouter: false,
+    google: false,
   });
 
   const handleToggleShowApiKey = (provider: ApiKeyProvider) => {
