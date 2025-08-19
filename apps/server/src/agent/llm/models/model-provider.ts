@@ -75,6 +75,28 @@ export class ModelProvider {
         }
       }
 
+      case "google": {
+        if (!userApiKeys.google) {
+          throw new Error(
+            "Google API key not provided. Please configure your API key in settings."
+          );
+        }
+
+        console.log("Creating Google Generative AI client with API key");
+
+        try {
+          const googleClient = createGoogleGenerativeAI({
+            apiKey: userApiKeys.google,
+          });
+          const model = googleClient(modelId);
+          console.log(`[MODEL_PROVIDER] Created Google model: ${modelId}`);
+          return model;
+        } catch (error) {
+          console.error("Google client creation failed:", error);
+          throw error;
+        }
+      }
+
       // case "groq": {
       //   if (!userApiKeys.groq) {
       //     throw new Error(
