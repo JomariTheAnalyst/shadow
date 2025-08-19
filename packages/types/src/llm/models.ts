@@ -5,7 +5,7 @@ export interface LLMConfig {
   maxTokens?: number;
   temperature?: number;
   systemPrompt?: string;
-  provider: "anthropic" | "openai" | "openrouter" /* | "groq" | "ollama" */;
+  provider: "anthropic" | "openai" | "openrouter" | "google" /* | "groq" | "ollama" */;
 }
 
 // Model Selection
@@ -23,13 +23,21 @@ export const AvailableModels = {
   CLAUDE_SONNET_4: "claude-sonnet-4-20250514",
   CLAUDE_3_5_HAIKU: "claude-3-5-haiku-20241022",
 
+  // Google Gemini models
+  GEMINI_2_FLASH: "gemini-2.0-flash",
+  GEMINI_1_5_PRO: "gemini-1.5-pro",
+  GEMINI_1_5_FLASH: "gemini-1.5-flash",
+  GEMINI_1_5_FLASH_8B: "gemini-1.5-flash-8b",
+
   // OpenRouter models
   XAI_GROK_3: "x-ai/grok-3",
   MOONSHOT_KIMI_K2: "moonshotai/kimi-k2",
+  MOONSHOT_KIMI_K2_FREE: "moonshotai/kimi-k2:free",
   MISTRAL_CODESTRAL_2508: "mistralai/codestral-2508",
   DEEPSEEK_R1_0528: "deepseek/deepseek-r1-0528",
   DEEPSEEK_CHAT_V3_0324: "deepseek/deepseek-chat-v3-0324",
   QWEN_3_CODER: "qwen/qwen3-coder",
+  QWEN_3_CODER_FREE: "qwen/qwen3-coder:free",
   QWEN_3_235B_A22B_2507: "qwen/qwen3-235b-a22b-2507",
 } as const;
 
@@ -38,7 +46,7 @@ export type ModelType = (typeof AvailableModels)[keyof typeof AvailableModels];
 export interface ModelInfo {
   id: ModelType;
   name: string;
-  provider: "anthropic" | "openai" | "openrouter" /* | "groq" | "ollama" */;
+  provider: "anthropic" | "openai" | "openrouter" | "google" /* | "groq" | "ollama" */;
 }
 
 export const ModelInfos: Record<ModelType, ModelInfo> = {
@@ -92,6 +100,28 @@ export const ModelInfos: Record<ModelType, ModelInfo> = {
     provider: "anthropic",
   },
 
+  // Google Gemini models
+  [AvailableModels.GEMINI_2_FLASH]: {
+    id: AvailableModels.GEMINI_2_FLASH,
+    name: "Gemini 2.0 Flash",
+    provider: "google",
+  },
+  [AvailableModels.GEMINI_1_5_PRO]: {
+    id: AvailableModels.GEMINI_1_5_PRO,
+    name: "Gemini 1.5 Pro",
+    provider: "google",
+  },
+  [AvailableModels.GEMINI_1_5_FLASH]: {
+    id: AvailableModels.GEMINI_1_5_FLASH,
+    name: "Gemini 1.5 Flash",
+    provider: "google",
+  },
+  [AvailableModels.GEMINI_1_5_FLASH_8B]: {
+    id: AvailableModels.GEMINI_1_5_FLASH_8B,
+    name: "Gemini 1.5 Flash 8B",
+    provider: "google",
+  },
+
   // OpenRouter models
   [AvailableModels.XAI_GROK_3]: {
     id: AvailableModels.XAI_GROK_3,
@@ -101,6 +131,11 @@ export const ModelInfos: Record<ModelType, ModelInfo> = {
   [AvailableModels.MOONSHOT_KIMI_K2]: {
     id: AvailableModels.MOONSHOT_KIMI_K2,
     name: "Kimi K2",
+    provider: "openrouter",
+  },
+  [AvailableModels.MOONSHOT_KIMI_K2_FREE]: {
+    id: AvailableModels.MOONSHOT_KIMI_K2_FREE,
+    name: "Kimi K2 (Free)",
     provider: "openrouter",
   },
   [AvailableModels.MISTRAL_CODESTRAL_2508]: {
@@ -123,6 +158,11 @@ export const ModelInfos: Record<ModelType, ModelInfo> = {
     name: "Qwen3 Coder",
     provider: "openrouter",
   },
+  [AvailableModels.QWEN_3_CODER_FREE]: {
+    id: AvailableModels.QWEN_3_CODER_FREE,
+    name: "Qwen3 Coder (Free)",
+    provider: "openrouter",
+  },
   [AvailableModels.QWEN_3_235B_A22B_2507]: {
     id: AvailableModels.QWEN_3_235B_A22B_2507,
     name: "Qwen 3 235B A22B 2507",
@@ -132,7 +172,7 @@ export const ModelInfos: Record<ModelType, ModelInfo> = {
 
 export function getModelProvider(
   model: ModelType
-): "anthropic" | "openai" | "openrouter" /* | "ollama" */ {
+): "anthropic" | "openai" | "openrouter" | "google" /* | "ollama" */ {
   return ModelInfos[model].provider;
 }
 
@@ -148,6 +188,8 @@ export function getProviderDefaultModel(provider: ApiKeyProvider): ModelType {
       return AvailableModels.GPT_5;
     case "openrouter":
       return AvailableModels.XAI_GROK_3;
+    case "google":
+      return AvailableModels.GEMINI_2_FLASH;
     default:
       throw new Error(`Unknown provider: ${provider}`);
   }
@@ -174,14 +216,25 @@ export async function getAllPossibleModels(
     );
   }
 
+  if (userApiKeys.google) {
+    models.push(
+      AvailableModels.GEMINI_2_FLASH,
+      AvailableModels.GEMINI_1_5_PRO,
+      AvailableModels.GEMINI_1_5_FLASH,
+      AvailableModels.GEMINI_1_5_FLASH_8B
+    );
+  }
+
   if (userApiKeys.openrouter) {
     models.push(
       AvailableModels.XAI_GROK_3,
       AvailableModels.MOONSHOT_KIMI_K2,
+      AvailableModels.MOONSHOT_KIMI_K2_FREE,
       AvailableModels.MISTRAL_CODESTRAL_2508,
       AvailableModels.DEEPSEEK_R1_0528,
       AvailableModels.DEEPSEEK_CHAT_V3_0324,
       AvailableModels.QWEN_3_CODER,
+      AvailableModels.QWEN_3_CODER_FREE,
       AvailableModels.QWEN_3_235B_A22B_2507
     );
   }
@@ -231,15 +284,26 @@ export async function getDefaultSelectedModels(
     );
   }
 
+  if (userApiKeys.google) {
+    defaultModels.push(
+      AvailableModels.GEMINI_2_FLASH, // default
+      AvailableModels.GEMINI_1_5_PRO, // default
+      AvailableModels.GEMINI_1_5_FLASH, // default
+      AvailableModels.GEMINI_1_5_FLASH_8B // default
+    );
+  }
+
   if (userApiKeys.openrouter) {
     // All OpenRouter models default
     defaultModels.push(
       AvailableModels.XAI_GROK_3,
       AvailableModels.MOONSHOT_KIMI_K2,
+      AvailableModels.MOONSHOT_KIMI_K2_FREE,
       AvailableModels.MISTRAL_CODESTRAL_2508,
       AvailableModels.DEEPSEEK_R1_0528,
       AvailableModels.DEEPSEEK_CHAT_V3_0324,
       AvailableModels.QWEN_3_CODER,
+      AvailableModels.QWEN_3_CODER_FREE,
       AvailableModels.QWEN_3_235B_A22B_2507
     );
   }
