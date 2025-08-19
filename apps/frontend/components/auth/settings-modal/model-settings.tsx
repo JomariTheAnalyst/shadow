@@ -222,6 +222,7 @@ export function ModelSettings() {
       if (provider === "openai") setSavingOpenai(false);
       else if (provider === "anthropic") setSavingAnthropic(false);
       else if (provider === "openrouter") setSavingOpenrouter(false);
+      else if (provider === "google") setSavingGoogle(false);
     }
   };
 
