@@ -305,6 +305,10 @@ export function ModelSettings() {
         setOpenrouterInput("");
         cancelOpenrouterSave();
         setSavingOpenrouter(false);
+      } else if (provider === "google") {
+        setGoogleInput("");
+        cancelGoogleSave();
+        setSavingGoogle(false);
       }
 
       // Clear validation result for this provider
